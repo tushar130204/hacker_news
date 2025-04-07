@@ -1,10 +1,11 @@
 import { Hono } from "hono";
-import { authenticationRoutes } from "./authentication-routes";
-import { usersRoutes } from "./users-routes";
-import { postsRoutes } from "./posts-routes";
-import { likesRoutes } from "./likes-routes";
-import { commentsRoutes } from "./comments-routes";
+import { authenticationRoutes } from "./authentication-routes.js";
+import { usersRoutes } from "./users-routes.js";
+import { postsRoutes } from "./posts-routes.js";
+import { likesRoutes } from "./likes-routes.js";
+import { commentsRoutes } from "./comments-routes.js";
 import { logger } from "hono/logger";
+import { swaggerRoutes } from "./swagger-routes.js";
 
 export const allRoutes = new Hono();
 
@@ -15,6 +16,7 @@ allRoutes.route("/users", usersRoutes);
 allRoutes.route("/posts", postsRoutes);
 allRoutes.route("/likes", likesRoutes);
 allRoutes.route("/comments", commentsRoutes);
+allRoutes.route("/ui", swaggerRoutes);
 
 allRoutes.get("/health", (context) => {
   return context.json({ message: "All Ok" }, 200);
