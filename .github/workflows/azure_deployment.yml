@@ -10,7 +10,7 @@ env:
   RESOURCE_GROUP: HackerNews
   CONTAINER_APPS_ENVIRONMENT: HackerNewsContainerAppsEnvironment
   LOG_ANALYTICS_WORKSPACE: HackerNewsLogAnalyticsWorkspace
-  ACR_REGISTRY: hackernews1si21ad060.azurecr.io
+  ACR_REGISTRY: hackernews1si21cs111.azurecr.io
   ACR_REPOSITORY_NAME: hackernews
   CONTAINER_APP_NAME: hackernews
   TARGET_PORT: 3000
@@ -31,7 +31,7 @@ jobs:
 
       # INFRA ENSURE BLOCKS
       - name: Check Resource Group exists
-        run: |
+        run: 
           RG_EXISTS=$(az group show \
             --name "${{ env.RESOURCE_GROUP }}" \
             --query name \
@@ -42,6 +42,22 @@ jobs:
             echo "👉 Please create it manually first."
             exit 1
           fi
+          - name: Register Microsoft.OperationalInsights provider
+  run: |
+    az provider register --namespace Microsoft.OperationalInsights
+
+    - name: Wait for provider registration to complete
+  run: |
+    while true; do
+      state=$(az provider show --namespace Microsoft.OperationalInsights --query "registrationState" -o tsv)
+      echo "Current state: $state"
+      if [ "$state" == "Registered" ]; then
+        break
+      fi
+      echo "Waiting for registration to complete..."
+      sleep 5
+    done
+
 
       - name: Ensure Log Analytics Workspace
         run: |
